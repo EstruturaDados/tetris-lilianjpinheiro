@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 //Desafio Novato: Criação da fila de peças do Tetris Stack
 typedef struct {
@@ -63,12 +64,24 @@ void aleatorizarPeca(Peca pecas[], int n) {
     }
 }
 
+void preencherFilaInicial(Fila *f, int n) {
+    if (n > MAX) n = MAX;
+    char nomes[] = {'I', 'O', 'T', 'L'};
+    for (int i = 0; i < n; i++) {
+        Peca p;
+        gerarPeca(&p, nomes[rand() % 4], i + 1);
+        inserirFila(f, p);
+    }
+}
+
 
 
 
 int main() {
     Fila fila;
     inicializarFila(&fila);
+    srand((unsigned)time(NULL));
+    preencherFilaInicial(&fila, 5);
 
     int opcao;
     Peca removida;
@@ -81,6 +94,7 @@ int main() {
 
         printf("1 - Jogar peça (dequeue)\n");
         printf("2 - Inserir nova peça (enqueue)\n");
+        printf("3 - Estado atual das peças \n");
         printf("0 - Sair\n");
 
         printf("\nEscolha: ");
@@ -112,10 +126,20 @@ int main() {
                 break;
             }
 
-            case 0:
+            case 3:
+            if (fila.total == 0) {
+                printf("Fila vazia!\n");
+
+            } else {
+                mostrarFila(&fila);
+                printf("Fila: [%d]\n", fila.total);
+            }
+            break;
+
+            case 0: {
                 printf("\nSaindo do jogo...\n");
                 break;
-
+            }
             default:
                 printf("\nOpcao invalida!\n");
 
