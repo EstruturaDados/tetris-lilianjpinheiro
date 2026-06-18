@@ -23,14 +23,20 @@ void inicializarFila(Fila *f) {
     f->total = 0;
 }
 
+// forward declaration
+void renumerarFila(Fila *f);
+
 void inserirFila(Fila *f, Peca p) {
     if (f->total == MAX) {
         printf("Fila cheia! Não é possível inserir.\n");
         return;
     }
+    p.id = f->total + 1;
     f->itens[f->fim] = p;
     f->fim = (f->fim + 1) % MAX;
     f->total++;
+    // renumerar após alteração para garantir ids em ordem crescente
+    renumerarFila(f);
 }
 
 void removerFila(Fila *f, Peca *p) {
@@ -41,6 +47,8 @@ void removerFila(Fila *f, Peca *p) {
     *p = f->itens[f->inicio];
     f->inicio = (f->inicio + 1) % MAX;
     f->total--;
+    // renumerar após remoção
+    renumerarFila(f);
 }
 
 void mostrarFila(Fila *f) {
@@ -71,6 +79,12 @@ void preencherFilaInicial(Fila *f, int n) {
         Peca p;
         gerarPeca(&p, nomes[rand() % 4], i + 1);
         inserirFila(f, p);
+    }
+}
+
+void renumerarFila(Fila *f) {
+    for (int i = 0, idx = f->inicio; i < f->total; i++, idx = (idx + 1) % MAX) {
+        f->itens[idx].id = i + 1;
     }
 }
 
@@ -118,7 +132,7 @@ int main() {
             {
                 Peca novaPeca;
                 char nomes[] = {'I', 'O', 'T', 'L'};
-                gerarPeca(&novaPeca, nomes[rand() % 4], fila.total + 1);
+                gerarPeca(&novaPeca, nomes[rand() % 4], 0);
                 inserirFila(&fila, novaPeca); 
                 printf("Peça gerada e inserida na fila!\n");
                 mostrarFila(&fila);
